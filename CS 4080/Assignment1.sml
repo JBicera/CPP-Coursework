@@ -27,10 +27,10 @@ fun size([]:'a list): int = 0
 fun reverse([]: 'a list) = [] 
 |   reverse(head::tail) = (reverse(tail)) @ [head];
 
-fun is_palindrome(lst: int list): bool = lst = reverse(lst);
+fun is_palindrome(lst: int list): bool = lst = reverse lst;
 
 (* Problem 5 *)
-fun no_dup(lst: 'a list): 'a list = 
+fun no_dup(lst: int list): int list = 
     case lst of
         [] => []
         |   [x] => [x]
