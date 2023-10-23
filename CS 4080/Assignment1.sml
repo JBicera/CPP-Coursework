@@ -1,6 +1,7 @@
 val lst = [1, 2, 3, 4, 5];
 val palindrome = [1, 2, 3, 2, 1];
-val dup = [1, 2, 2, 3, 3, 3];
+val palindromeStr = ["r", "a", "c", "e", "c", "a", "r"];
+val dup = [1,1,2,3,3,2,4,4];
 
 (* Problem 1 *)
 fun find_last_helper([], last) = last
@@ -24,10 +25,10 @@ fun size([]:'a list): int = 0
 |   size(_::tail): int = 1 + size(tail);
 
 (* Problem 4 *)
-fun reverse([]: int list) = [] 
+fun reverse ([]) = [] 
   | reverse(head::tail) = (reverse(tail)) @ [head];
 
-fun is_palindrome(lst: int list): bool =
+fun is_palindrome(lst) =
     let
         val rev = reverse lst
     in
@@ -35,17 +36,16 @@ fun is_palindrome(lst: int list): bool =
     end;
 
 (* Problem 5 *)
-fun no_dup(lst: int list): int list = 
-    case lst of
-        [] => []
-        |   [x] => [x]
-        | x::y::tail => if x = y then no_dup(y::tail)
+fun no_dup([]) = []
+        |no_dup [x] = [x]
+        |no_dup (x::y::tail) = if x = y then no_dup(y::tail)
                         else x:: no_dup(y::tail);
 
 (* Testing *)
-val a1 = find_last(lst);
-val a2 = element_at(lst,3);
-val a3 = size(lst);
-val a4 = is_palindrome(lst);
-val a4_2 = is_palindrome(palindrome);
-val a5 = no_dup(dup);
+val a1 = find_last(lst); (* Should return 5 *)
+val a2 = element_at(lst,3);(* Should return 3 *)
+val a3 = size(lst); (* Should return 5 *)
+val a4 = is_palindrome(lst); (* Should return False *)
+val a4_2 = is_palindrome(palindrome); (* Should return True *)
+val a4_3 = is_palindrome(palindromeStr); (* Should return True *)
+val a5 = no_dup(dup); (* Should return [1,2,3,2,4] *)
