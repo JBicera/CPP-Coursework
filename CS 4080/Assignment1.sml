@@ -24,10 +24,15 @@ fun size([]:'a list): int = 0
 |   size(_::tail): int = 1 + size(tail);
 
 (* Problem 4 *)
-fun reverse([]: 'a list) = [] 
-|   reverse(head::tail) = (reverse(tail)) @ [head];
+fun reverse([]: int list) = [] 
+  | reverse(head::tail) = (reverse(tail)) @ [head];
 
-fun is_palindrome(lst: int list): bool = lst = reverse lst;
+fun is_palindrome(lst: int list): bool =
+    let
+        val rev = reverse lst
+    in
+        lst = rev
+    end;
 
 (* Problem 5 *)
 fun no_dup(lst: int list): int list = 
