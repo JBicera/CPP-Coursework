@@ -3,11 +3,15 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import base64
-import os
+import sys
 
 # Public Key
-publicKeyFile = "wongPublicKey.pem"
+publicKeyFile = "biceraPublicKey.pem"
+
+# Plaintext file (input)
 plaintextFile = "plaintext.txt"
+
+# Ciphertext file (output)
 ciphertextFile = "ciphertext.txt"
 
 def encrypt_file(plaintextFile, publicKeyFile, ciphertextFile):
@@ -19,16 +23,20 @@ def encrypt_file(plaintextFile, publicKeyFile, ciphertextFile):
     with open(plaintextFile, "rb") as file:
         plaintext = file.read()
 
-
     # Encrypt
-    ciphertext = publicKey.encrypt(
-        plaintext,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
+    try:
+        ciphertext = publicKey.encrypt(
+            plaintext,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
         )
-    )
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
     # Encode as base64
     cipherTextB64 = base64.b64encode(ciphertext).decode()
 
