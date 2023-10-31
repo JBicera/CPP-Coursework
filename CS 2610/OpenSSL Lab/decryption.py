@@ -6,14 +6,14 @@ import base64
 import sys
 
 # Private Key
-privateKeyFile = "myPrivatekey.pem"
-passphrase = "password"
+privateKeyFile = "biceraPrivateKey.pem"
+passphrase = "helloworld"
 
 # Ciphertext file (input)
-ciphertextFile = "ciphertext.txt"
+ciphertextFile = "toBiceraCipherText.txt"
 
 # Plaintext file (output)
-plaintextFile = "plaintext.txt"
+plaintextFile = "toBiceraPlainText.txt"
 
 def decrypt_file(ciphertextFile, privateKeyFile, passphrase, plaintextFile):
     # Load private key

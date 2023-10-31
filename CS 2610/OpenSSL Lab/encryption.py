@@ -6,13 +6,13 @@ import base64
 import sys
 
 # Public Key
-publicKeyFile = "biceraPublicKey.pem"
+publicKeyFile = "wongPublicKey.pem"
 
 # Plaintext file (input)
-plaintextFile = "plaintext.txt"
+plaintextFile = "toWongPlainText.txt"
 
 # Ciphertext file (output)
-ciphertextFile = "ciphertext.txt"
+ciphertextFile = "toWongCipherText.txt"
 
 def encrypt_file(plaintextFile, publicKeyFile, ciphertextFile):
     # Load public key

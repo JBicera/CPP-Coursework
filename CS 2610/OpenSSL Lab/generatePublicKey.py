@@ -2,10 +2,10 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 # Private Key passphrase
-passphrase = b'password'
+passphrase = b'helloWorld'
 
 # Read the Private Key
-with open('myPrivateKey.pem', 'rb') as privatekeyFile:
+with open('biceraPrivateKey.pem', 'rb') as privatekeyFile:
     privateKey = serialization.load_pem_private_key(privatekeyFile.read(), password = passphrase)
 
 # Extract the public key
@@ -18,5 +18,5 @@ formattedPublicKey = publicKey.public_bytes(
 )
 
 # Save Public Key to a file
-with open('publickey.pem', 'wb') as publicKeyFile:
+with open('biceraPublicKey.pem', 'wb') as publicKeyFile:
     publicKeyFile.write(formattedPublicKey)
