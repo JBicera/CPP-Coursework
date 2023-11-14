@@ -5,8 +5,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.String;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -44,7 +43,6 @@ public class Admin {
 	private JTree tree;
 
 	//Map to store followers for each user
-    private Map<String, DefaultListModel<String>> followersMap;
 
 	//Method to get the Singleton instance
     public static Admin getInstance() {
@@ -55,22 +53,15 @@ public class Admin {
         return instance;
     }
 	//Notify followers about the new tweet
-    public void notifyFollowers(User user, String tweet) {
-        String username = user.getUsername();
+    public void notifyFollowers(String userID, String tweet, String[] followers) {
         // Update the news feed of each follower
-        if (followersMap.containsKey(username)) {
-            DefaultListModel<String> followerListModel = followersMap.get(username);
-            for (int i = 0; i < followerListModel.getSize(); i++) {
-                String followerName = followerListModel.getElementAt(i);
-                for (int j = 0; j < numUsers; j++) {
-                    if (userObjects[j].getUsername().equals(followerName)) {
-                        userObjects[j].getTweetModel().addElement(tweet);
-                        userObjects[j].getNewsFeed().repaint();
+		for (int i = 0; i < followers.length; i++) {
+                if (followers[i].equals(userID)) {
+                        userObjects[i].getTweetModel().addElement(tweet);
+                        userObjects[i].getNewsFeed().repaint();
                         break;
                     }
-                }
             }
-        }
     }
 	//Private constructor to enforce Singleton pattern
 	private Admin()
@@ -81,7 +72,6 @@ public class Admin {
 		userObjects = new User[100];
 		numUsers = 0;
 		numGroups = 0;
-		followersMap = new HashMap<>();
 	}
 	private void setupGUI(){
 		//Sets JFrame
@@ -106,8 +96,8 @@ public class Admin {
 		configPanel.setLayout(new BorderLayout());
 		JPanel treeConfig = new JPanel();
 		treeConfig.setLayout(new GridLayout(2,2,5,5));
-		userID = new JTextArea("User Id");
-		groupId = new JTextArea("Group Id");
+		userID = new JTextArea("User ID");
+		groupId = new JTextArea("Group ID");
 		addUser = new JButton("Add User");
 		addGroup = new JButton("Add Group");
 		userID.setBorder(simpleBorder);

@@ -9,11 +9,9 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import java.lang.String;
-import java.util.Map;
 
 public class User{
 	//Private Variables
-	private Admin admin;
 	private String currUser;
 	private JTextArea userID;
     private JButton followUser;
@@ -22,19 +20,15 @@ public class User{
     private JList<String> newsFeed;
     private JFrame jfrm;
     private DefaultListModel<String> tweetModel;
-    private String[] following = new String[100];
+    private String[] followers = new String[100];
     private String[] messages = new String[100];
     private int totalMessages = 0;
     private int positiveMessages = 0;
     private int numFollow = 0;
-	private Map<String, DefaultListModel<String>> followersMap;
 
 	
-	User(String currUser, Admin admin, Map<String, DefaultListModel<String>> followersMap){
-
-		this.admin = admin;
+	User(String currUser,final Admin admin){
 		this.currUser = currUser;
-		this.followersMap = followersMap;
 		//Initialize JFrame
 		jfrm = new JFrame("User");
 		jfrm.setSize(300,400);
@@ -92,7 +86,13 @@ public class User{
 		
 		tweet.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				String userTweet = "- " + currUser + ": " + tweetMessage.getText();
+				String message = tweetMessage.getText();
+				if(message.toLowerCase().contains("good") ||
+					message.toLowerCase().contains("great") ||
+					message.toLowerCase().contains("excellent"))
+					positiveMessages += 1;
+
+				String userTweet = "- " + currUser + ": " + message;
 				messages[totalMessages] = userTweet;
 				totalMessages += 1;
 				
@@ -100,39 +100,18 @@ public class User{
 				
 				newsFeed.repaint();
 				
-				if(tweetMessage.getText().toLowerCase().contains("good") ||
-					tweetMessage.getText().toLowerCase().contains("great") ||
-					tweetMessage.getText().toLowerCase().contains("excellent"))
-					positiveMessages += 1;
-				
-				//Notify followers about the new tweet
-                notifyFollowers(userTweet);
+				admin.notifyFollowers(currUser, userTweet, followers);
 			}
 		});
 
 		followUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				following[numFollow] = userID.getText();
-				
-				
+				followers[numFollow] = userID.getText();
 				numFollow += 1;
-                
-				
 			}
 		});
-		
 	}
-	// Notify followers about the new tweet
-    private void notifyFollowers(String tweet) {
-        admin.notifyFollowers(this, tweet);
-		followersMapAddFollower(currUser);
-    }
 
-	private void followersMapAddFollower(String follower) {
-        DefaultListModel<String> followerListModel = followersMap.getOrDefault(follower, new DefaultListModel<>());
-        followerListModel.addElement(currUser);
-        followersMap.put(follower, followerListModel);
-    }
 	public void setVisible() {
 		jfrm.setVisible(true);
 	}
