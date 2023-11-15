@@ -1,3 +1,6 @@
+///Name: Joshua Bicera
+/// I don't know why but when I compile the code it makes like 10 .class files
+/// It is annoying but my code still works
 package a2;
 
 import java.awt.BorderLayout;
