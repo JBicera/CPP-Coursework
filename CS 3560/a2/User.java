@@ -27,6 +27,7 @@ public class User implements Observer, VisitorComponent {
 	private JTextArea tweetMessage;
     private JButton followUser;
 	private JButton tweet;
+	private JLabel lastUpdateTimeLabel;
 
 	//Lists the twitter feed
     private JList<String> newsFeed;
@@ -38,6 +39,8 @@ public class User implements Observer, VisitorComponent {
 
 	//Private Variables
 	private String currUser; //Name of the user
+	private long creationTime; //Time of creation of user
+	private long lastUpdateTime; //Last time user tweeted
     private String[] followers = new String[10];//Who the user is following
     private String[] messages = new String[10];//All tweets
     private int totalMessages = 0; //Number of tweets
@@ -47,6 +50,8 @@ public class User implements Observer, VisitorComponent {
 	//Initializes with the user's twitter name and the same admin
 	User(String currUser,final Admin admin){
 		this.currUser = currUser;
+		creationTime = System.currentTimeMillis();
+		lastUpdateTime = 0;
 		//Initialize JFrame
 		jfrm = new JFrame("User");
 		jfrm.setSize(300,400);
@@ -56,13 +61,15 @@ public class User implements Observer, VisitorComponent {
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(2,1,7,7));
 		mainPanel.setBackground(Color.LIGHT_GRAY);
-		mainPanel.setBorder(new TitledBorder(currUser));
+		mainPanel.setBorder(new TitledBorder(currUser + " (Account created: " + creationTime + ")"));
 
 		//Top and bottom parts of the main panel
 		JPanel userTopJPanel = new JPanel();
 		userTopJPanel.setLayout(new BorderLayout());
 		JPanel userBottomJPanel = new JPanel();
 		userBottomJPanel.setLayout(new BorderLayout());
+		lastUpdateTimeLabel = new JLabel("Last Update Time: " + lastUpdateTime);
+		
 		
 		//Organize the top and bottom panels with grid layout
 		JPanel userTopSubPanel = new JPanel();
@@ -74,12 +81,15 @@ public class User implements Observer, VisitorComponent {
 		JPanel userBottomSubPanel2 = new JPanel();
 		userBottomSubPanel2.setLayout(new GridLayout(1,1,5,5));
 		
+		
+
+
 		//Initialize private variables
 		tweetModel = new DefaultListModel<String>();
 		followingModel = new DefaultListModel<String>();
-		userID = new JTextArea(currUser);
+		userID = new JTextArea("Enter Username");
 		followUser = new JButton("Follow User");
-		tweetMessage = new JTextArea("Tweet Message");
+		tweetMessage = new JTextArea("Enter Tweet");
 		tweet = new JButton("Post Tweet");
 		newsFeed = new JList<>(tweetModel = new DefaultListModel<>());
 		followingList = new JList<>(followingModel);
@@ -95,9 +105,17 @@ public class User implements Observer, VisitorComponent {
 		userTopSubPanel.add(followUser);
 		userTopSubPanel2.add(followingList);
 		userBottomSubPanel2.add(newsFeed);
-		userBottomSubPanel.add(tweetMessage);
-		userBottomSubPanel.add(tweet);
-		
+		userBottomSubPanel.setLayout(new BoxLayout(userBottomSubPanel, BoxLayout.Y_AXIS));
+		userBottomSubPanel.add(lastUpdateTimeLabel, BorderLayout.NORTH);
+		userBottomSubPanel.add(tweetMessage, BorderLayout.WEST);
+		userBottomSubPanel.add(tweet, BorderLayout.EAST);
+			
+		//Adjust subpanels
+		userTopJPanel.add(userTopSubPanel, BorderLayout.NORTH);
+		userTopJPanel.add(userTopSubPanel2, BorderLayout.CENTER);
+		userBottomJPanel.add(userBottomSubPanel,BorderLayout.NORTH);
+		userBottomJPanel.add(userBottomSubPanel2, BorderLayout.CENTER);
+			
 		//Adjust subpanels
 		userTopJPanel.add(userTopSubPanel, BorderLayout.NORTH);
 		userTopJPanel.add(userTopSubPanel2, BorderLayout.CENTER);
@@ -129,6 +147,9 @@ public class User implements Observer, VisitorComponent {
 				newsFeed.repaint();
 				//Notify followers of tweet and add it into their feed
 				admin.notifyFollowers(userTweet, followers);
+				// Update lastUpdateTimeLabel with the current time
+				lastUpdateTime = System.currentTimeMillis();
+				lastUpdateTimeLabel.setText("Last Update Time: " + lastUpdateTime);
 			}
 		});
 
@@ -173,5 +194,6 @@ public class User implements Observer, VisitorComponent {
     public int getPositiveMessages() {return positiveMessages;}
 	public String getUsername(){return currUser;}
 	public JList<String> getNewsFeed(){return newsFeed;}
+	public long getLatestUpdated(){return lastUpdateTime;}
 	public DefaultListModel<String> getTweetModel(){return tweetModel;}
 }

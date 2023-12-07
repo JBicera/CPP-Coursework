@@ -17,5 +17,5 @@ public class Student
     }
     public void setAnswer(String input) {this.answers.add(input);}
     public String getID() {return uniqueID;}
-	public void incrementID() {countID++;}
+	public void incrementID() {countID = countID + 1;}
 }

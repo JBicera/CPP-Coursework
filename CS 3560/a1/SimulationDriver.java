@@ -56,6 +56,7 @@ public class SimulationDriver
             iVote.questions.get(i).resetChoices(); 
             iVote.answerStats.clear();
         }
+        scanner.close();
     }  
     public static void getStudents(VotingService iVote,int max)
     {

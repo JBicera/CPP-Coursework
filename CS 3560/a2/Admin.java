@@ -1,6 +1,4 @@
 ///Name: Joshua Bicera
-/// I don't know why but when I compile the code it makes like 10 .class files
-/// It is annoying but my code still works
 package a2;
 
 import java.awt.BorderLayout;
@@ -57,6 +55,8 @@ public class Admin implements Subject, UserVisitor {
 	private JButton showMessagesTotal;
 	private JButton showGroupTotal;
 	private JButton showPositivePercentage;
+	private JButton showLastUpdated;
+	private JButton idVerification;
 	
 	//Display data in a hiearchal tree
 	private JTree tree;
@@ -168,18 +168,23 @@ public class Admin implements Subject, UserVisitor {
 		//Create config panel
 		JPanel configPanel = new JPanel();
 		configPanel.setLayout(new BorderLayout());
+		JPanel config2Panel = new JPanel();
+		config2Panel.setLayout(new GridLayout(3,1, 5 ,5));
 		JPanel treeConfig = new JPanel();
 		treeConfig.setLayout(new GridLayout(2,2,5,5));
 		userID = new JTextArea("User ID");
 		groupId = new JTextArea("Group ID");
 		addUser = new JButton("Add User");
 		addGroup = new JButton("Add Group");
+		idVerification = new JButton("Verify Users");
+		showLastUpdated = new JButton("Show Latest Update");
 		userID.setBorder(simpleBorder);
 		groupId.setBorder(simpleBorder);
 		treeConfig.add(userID);
 		treeConfig.add(addUser);
 		treeConfig.add(groupId);
 		treeConfig.add(addGroup);
+		
 		
 		//User view for individual users
 		JPanel userView = new JPanel();
@@ -200,7 +205,10 @@ public class Admin implements Subject, UserVisitor {
 		showStats.add(showPositivePercentage);
 
 		configPanel.add(treeConfig, BorderLayout.NORTH);
-		configPanel.add(userView);
+		config2Panel.add(openUserView);
+		config2Panel.add(idVerification);
+		config2Panel.add(showLastUpdated);
+		configPanel.add(config2Panel, BorderLayout.CENTER);
 		configPanel.add(showStats, BorderLayout.SOUTH);
 		mainPanel.add(treePanel, BorderLayout.WEST);
 		mainPanel.add(configPanel, BorderLayout.EAST);	
@@ -321,6 +329,45 @@ public class Admin implements Subject, UserVisitor {
 			}
 		});
 
+		idVerification.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae){
+				boolean uniqueFlag = true;
+				boolean noSpaceFlag = true;
+				//Checks if username is taken
+                for(int i = 0; i< numUsers; i++){
+					if(userObjects[i].getUsername().contains(" "))
+						noSpaceFlag = false;
+                    for(int j = 0; j < numUsers; j++)
+                        if (userObjects[i].getUsername().equals(userObjects[j].getUsername())){
+                            uniqueFlag = true;
+                            break;
+                    }
+					//Break again
+                    if (uniqueFlag)
+                        break;
+                }
+                if (uniqueFlag && noSpaceFlag){
+                    System.out.println("Users are valid");
+				}
+                else{
+                    System.out.println("Users are not valid");
+				}
+            }
+        });
+		showLastUpdated.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae){
+				long mostRecent = -100;
+				String user = "";
+				for(int i = 0; i < numUsers; i++)
+				{
+					if(userObjects[i].getLatestUpdated() > mostRecent){
+						mostRecent = userObjects[i].getLatestUpdated();
+						user = userObjects[i].getUsername();
+					}
+				}
+				System.out.println("Most recent update is: " + mostRecent + " by User: " + user);
+			}
+		});
 		//Sets up tree display
 		//This method follows the Composite Pattern by treating the tree nodes uniformly,
 		//where both individual users (leaf nodes) and groups (composite nodes) are considered.
@@ -349,10 +396,12 @@ public class Admin implements Subject, UserVisitor {
                     }
                 }
             }
+		
         });
 		jfrm.add(mainPanel);
 		jfrm.setVisible(true);
 	}
+
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
