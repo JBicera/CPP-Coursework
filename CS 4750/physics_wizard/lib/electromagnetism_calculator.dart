@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
+// Widget representing the calculator screen
 class ElectromagnetismCalculatorScreen extends StatefulWidget {
   @override
   _ElectromagnetismCalculatorScreenState createState() =>
@@ -9,19 +11,31 @@ class ElectromagnetismCalculatorScreen extends StatefulWidget {
 class _ElectromagnetismCalculatorScreenState
     extends State<ElectromagnetismCalculatorScreen> {
   double result = 0.0;
-  String selectedEquation = 'F = k(q1*q2)/r^2';
+  String selectedEquation = 'F = k(q1*q2)/r^2'; //Default selected equation
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Electromagnetism Calculator'),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // Navigate directly to the MenuScreen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuScreen(),
+                ),
+              );
+            }),
       ),
       body: Container(
         decoration: BoxDecoration(
           color: Colors.grey[200],
         ),
         child: Column(
+          // Display the result at the top of the screen
           children: [
             Container(
               width: double.infinity,
@@ -37,6 +51,7 @@ class _ElectromagnetismCalculatorScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Dropdown for selecting equations
                     DropdownButton<String>(
                       value: selectedEquation,
                       hint: Text('Select Formula'),
@@ -50,6 +65,7 @@ class _ElectromagnetismCalculatorScreenState
                         color: Colors.black,
                       ),
                       items: [
+                        // All available equations
                         'F = k(q1*q2)/r^2',
                         'E = F/q0',
                         'F = qv*B',
@@ -63,6 +79,7 @@ class _ElectromagnetismCalculatorScreenState
                       }).toList(),
                     ),
                     SizedBox(height: 20.0),
+                    // Input form for entering variables and calculating result
                     ElectromagnetismInputForm(
                       selectedEquation: selectedEquation,
                       onResultChanged: (double newResult) {
@@ -83,6 +100,7 @@ class _ElectromagnetismCalculatorScreenState
   }
 }
 
+// Widget representing the input form for Electromagnetism equations
 class ElectromagnetismInputForm extends StatefulWidget {
   final String selectedEquation;
   final ValueChanged<double> onResultChanged;
@@ -98,6 +116,7 @@ class ElectromagnetismInputForm extends StatefulWidget {
 }
 
 class _ElectromagnetismInputFormState extends State<ElectromagnetismInputForm> {
+  // Map to store variable values for the selected equation
   Map<String, double> variables = {
     'k': 8.99e9, // Coulomb's constant
     'q1': 0.0, // Charge 1
@@ -116,6 +135,7 @@ class _ElectromagnetismInputFormState extends State<ElectromagnetismInputForm> {
   };
   @override
   Widget build(BuildContext context) {
+    // Get the required variables for the selected kinematic equation
     List<String> requiredVariables =
         getRequiredVariables(widget.selectedEquation);
 
@@ -153,11 +173,7 @@ class _ElectromagnetismInputFormState extends State<ElectromagnetismInputForm> {
     );
   }
 
-  void updateResult() {
-    double result = calculateResult(widget.selectedEquation, variables);
-    widget.onResultChanged(result);
-  }
-
+  // Function to get the required variables
   List<String> getRequiredVariables(String equation) {
     switch (equation) {
       case 'F = k(q1*q2)/r^2':
@@ -175,6 +191,7 @@ class _ElectromagnetismInputFormState extends State<ElectromagnetismInputForm> {
     }
   }
 
+  // Function to calculate the result
   double calculateResult(String formula, Map<String, double?> variables) {
     double result = 0.0;
 

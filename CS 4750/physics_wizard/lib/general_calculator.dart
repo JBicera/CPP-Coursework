@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
+import 'main.dart';
 
+// Screen for general calculator
 class GeneralCalculatorScreen extends StatefulWidget {
   @override
   _GeneralCalculatorScreenState createState() =>
@@ -8,9 +10,10 @@ class GeneralCalculatorScreen extends StatefulWidget {
 }
 
 class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
-  String _input = '';
-  double _result = 0.0;
+  String _input = ''; // Input expression for calculations
+  double _result = 0.0; // Result of calculations
 
+  // Functions for button presses
   void _onButtonPressed(String buttonText) {
     setState(() {
       if (buttonText == '=') {
@@ -25,6 +28,7 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
     });
   }
 
+  // Function to call to evaluate expression and to update input
   void _calculateResult() {
     try {
       _result = eval(_input);
@@ -34,11 +38,13 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
     }
   }
 
+  // Function to clear inputs
   void _clearInput() {
     _input = '';
     _result = 0.0;
   }
 
+  // Function to toggle sign of input
   void _toggleSign() {
     if (_input.isNotEmpty && _input[0] != '-') {
       _input = '-' + _input;
@@ -52,6 +58,17 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('General Calculator'),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // Navigate directly to the MenuScreen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuScreen(),
+                ),
+              );
+            }),
       ),
       body: Column(
         children: [
@@ -70,10 +87,11 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
             ),
           ),
           Container(
-            height: 500.0, // Adjust the overall height as needed
+            height: 500.0,
             width: double.infinity,
             child: Column(
               children: [
+                // Make buttons for calculator
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -125,6 +143,7 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
     );
   }
 
+  // Widget for calculator buttons
   Widget _buildButton(String buttonText,
       {double width = 80.0, double height = 80.0}) {
     return Container(
@@ -148,6 +167,7 @@ class _GeneralCalculatorScreenState extends State<GeneralCalculatorScreen> {
     );
   }
 
+  // Function to evaluate mathematical expression
   double eval(String expression) {
     Parser p = Parser();
     Expression exp = p.parse(expression);

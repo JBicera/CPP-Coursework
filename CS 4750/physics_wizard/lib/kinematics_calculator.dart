@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'main.dart';
 
+// Widget representing the calculator screen
 class KinematicsCalculatorScreen extends StatefulWidget {
   @override
   _KinematicsCalculatorScreenState createState() =>
@@ -9,21 +11,34 @@ class KinematicsCalculatorScreen extends StatefulWidget {
 
 class _KinematicsCalculatorScreenState
     extends State<KinematicsCalculatorScreen> {
-  String selectedEquation = 'V = V0 + at';
+  String selectedEquation = 'V = V0 + at'; //Default selected equation
   double result = 0.0;
-  final String delta = '\u0394';
+  final String delta =
+      '\u0394'; // Save greek letter delta for "Change in" symbol
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Kinematics Calculator'),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // Navigate directly to the MenuScreen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuScreen(),
+                ),
+              );
+            }),
       ),
       body: Container(
         decoration: BoxDecoration(
           color: Colors.grey[200],
         ),
         child: Column(
+          // Display the result at the top of the screen
           children: [
             Container(
               width: double.infinity,
@@ -39,6 +54,7 @@ class _KinematicsCalculatorScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Dropdown for selecting equations
                     DropdownButton<String>(
                       value: selectedEquation,
                       hint: Text('Select Kinematic Equation'),
@@ -52,6 +68,7 @@ class _KinematicsCalculatorScreenState
                         color: Colors.black,
                       ),
                       items: [
+                        // All available equations
                         'V = V0 + at',
                         '($delta)x = Vi*t + 0.5at^2',
                         'Vf^2 = Vi^2 + 2a($delta)x',
@@ -64,6 +81,7 @@ class _KinematicsCalculatorScreenState
                       }).toList(),
                     ),
                     SizedBox(height: 20.0),
+                    // Input form for entering variables and calculating result
                     KinematicsInputForm(
                       selectedEquation: selectedEquation,
                       onResultChanged: (double newResult) {
@@ -84,6 +102,7 @@ class _KinematicsCalculatorScreenState
   }
 }
 
+// Widget representing the input form for kinematics equations
 class KinematicsInputForm extends StatefulWidget {
   final String selectedEquation;
   final ValueChanged<double> onResultChanged;
@@ -98,6 +117,7 @@ class KinematicsInputForm extends StatefulWidget {
 }
 
 class _KinematicsInputFormState extends State<KinematicsInputForm> {
+  // Map to store variable values for the selected equation
   Map<String, double> variables = {
     'V0': 0.0, // Initial velocity
     'a': 0.0, // Acceleration
@@ -109,6 +129,7 @@ class _KinematicsInputFormState extends State<KinematicsInputForm> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the required variables for the selected kinematic equation
     List<String> requiredVariables =
         getRequiredVariables(widget.selectedEquation);
 
@@ -146,6 +167,7 @@ class _KinematicsInputFormState extends State<KinematicsInputForm> {
     );
   }
 
+  // Function to get the required variables
   List<String> getRequiredVariables(String equation) {
     const String delta = '\u0394';
     switch (equation) {
@@ -162,6 +184,7 @@ class _KinematicsInputFormState extends State<KinematicsInputForm> {
     }
   }
 
+  // Function to calculate the result
   double calculateResult(String equation, Map<String, double?> variables) {
     double result = 0.0;
     const String delta = '\u0394';

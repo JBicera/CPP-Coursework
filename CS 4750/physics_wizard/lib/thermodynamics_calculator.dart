@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
+// Widget representing the calculator screen
 class ThermodynamicsCalculatorScreen extends StatefulWidget {
   @override
   _ThermodynamicsCalculatorScreenState createState() =>
@@ -8,29 +10,41 @@ class ThermodynamicsCalculatorScreen extends StatefulWidget {
 
 class _ThermodynamicsCalculatorScreenState
     extends State<ThermodynamicsCalculatorScreen> {
-  final String delta = '\u0394';
+  final String delta =
+      '\u0394'; // Save greek letter delta for "Change in" symbol
   double result = 0.0;
-  String selectedEquation = 'PV = nRt';
+  String selectedEquation = 'PV = nRt'; //Default selected equation
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Thermodynamics Calculator'),
+        leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              // Navigate directly to the MenuScreen
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MenuScreen(),
+                ),
+              );
+            }),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[200], // Lighter overall background color
+          color: Colors.grey[200],
         ),
         child: Column(
           children: [
             // Display the result at the top of the screen
             Container(
-              width: double.infinity, // Full width
-              color: Colors.grey[300], // Light grey background color
+              width: double.infinity,
+              color: Colors.grey[300],
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Result: $result', // Display the result
-                style: TextStyle(fontSize: 24.0), // Larger font size
+                'Result: $result',
+                style: TextStyle(fontSize: 24.0),
               ),
             ),
             Expanded(
@@ -38,6 +52,7 @@ class _ThermodynamicsCalculatorScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Dropdown for selecting equations
                     DropdownButton<String>(
                       value: selectedEquation,
                       hint: Text('Select Thermodynamic Equation'),
@@ -51,6 +66,7 @@ class _ThermodynamicsCalculatorScreenState
                         color: Colors.black,
                       ),
                       items: [
+                        // All available equations
                         'PV = nRt',
                         '($delta)U = Q - W',
                         'q = mC($delta)T',
@@ -63,6 +79,7 @@ class _ThermodynamicsCalculatorScreenState
                       }).toList(),
                     ),
                     SizedBox(height: 20.0),
+                    // Input form for entering variables and calculating result
                     ThermodynamicsInputForm(
                       selectedEquation: selectedEquation,
                       onResultChanged: (double newResult) {
@@ -83,6 +100,7 @@ class _ThermodynamicsCalculatorScreenState
   }
 }
 
+// Widget representing the input form for Thermodynamics equations
 class ThermodynamicsInputForm extends StatefulWidget {
   final String selectedEquation;
   final ValueChanged<double> onResultChanged;
@@ -98,6 +116,7 @@ class ThermodynamicsInputForm extends StatefulWidget {
 }
 
 class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
+  // Map to store variable values for the selected equation
   Map<String, double> variables = {
     'Q': 0.0, // Heat added or removed from the system
     'W': 0.0, // Work done on or by the system
@@ -113,6 +132,7 @@ class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the required variables for the selected kinematic equation
     List<String> requiredVariables =
         getRequiredVariables(widget.selectedEquation);
     return Padding(
@@ -151,6 +171,7 @@ class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
     );
   }
 
+  // Function to get the required variables
   List<String> getRequiredVariables(String equation) {
     const String delta = '\u0394';
     switch (equation) {
@@ -168,6 +189,7 @@ class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
     }
   }
 
+  // Function to calculate the result
   double calculateResult(String equation, Map<String, double?> variables) {
     double result = 0.0;
     const String delta = '\u0394';
