@@ -1,36 +1,35 @@
 import 'package:flutter/material.dart';
 
-class ThermodynamicsCalculatorScreen extends StatefulWidget {
+class ElectromagnetismCalculatorScreen extends StatefulWidget {
   @override
-  _ThermodynamicsCalculatorScreenState createState() =>
-      _ThermodynamicsCalculatorScreenState();
+  _ElectromagnetismCalculatorScreenState createState() =>
+      _ElectromagnetismCalculatorScreenState();
 }
 
-class _ThermodynamicsCalculatorScreenState
-    extends State<ThermodynamicsCalculatorScreen> {
-  final String delta = '\u0394';
+class _ElectromagnetismCalculatorScreenState
+    extends State<ElectromagnetismCalculatorScreen> {
   double result = 0.0;
-  String selectedEquation = 'PV = nRt';
+  String selectedEquation = 'F = k(q1*q2)/r^2';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thermodynamics Calculator'),
+        title: Text('Electromagnetism Calculator'),
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[200], // Lighter overall background color
+          color: Colors.grey[200],
         ),
         child: Column(
           children: [
-            // Display the result at the top of the screen
             Container(
-              width: double.infinity, // Full width
-              color: Colors.grey[300], // Light grey background color
+              width: double.infinity,
+              color: Colors.grey[300],
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Result: $result', // Display the result
-                style: TextStyle(fontSize: 24.0), // Larger font size
+                'Result: $result',
+                style: TextStyle(fontSize: 24.0),
               ),
             ),
             Expanded(
@@ -40,7 +39,7 @@ class _ThermodynamicsCalculatorScreenState
                   children: [
                     DropdownButton<String>(
                       value: selectedEquation,
-                      hint: Text('Select Thermodynamic Equation'),
+                      hint: Text('Select Formula'),
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedEquation = newValue!;
@@ -51,10 +50,11 @@ class _ThermodynamicsCalculatorScreenState
                         color: Colors.black,
                       ),
                       items: [
-                        'PV = nRt',
-                        '($delta)U = Q - W',
-                        'q = mC($delta)T',
-                        'W = -p($delta)V',
+                        'F = k(q1*q2)/r^2',
+                        'E = F/q0',
+                        'F = qv*B',
+                        'V = I*R',
+                        'P = I*V',
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
@@ -63,7 +63,7 @@ class _ThermodynamicsCalculatorScreenState
                       }).toList(),
                     ),
                     SizedBox(height: 20.0),
-                    ThermodynamicsInputForm(
+                    ElectromagnetismInputForm(
                       selectedEquation: selectedEquation,
                       onResultChanged: (double newResult) {
                         setState(() {
@@ -83,38 +83,42 @@ class _ThermodynamicsCalculatorScreenState
   }
 }
 
-class ThermodynamicsInputForm extends StatefulWidget {
+class ElectromagnetismInputForm extends StatefulWidget {
   final String selectedEquation;
   final ValueChanged<double> onResultChanged;
 
-  ThermodynamicsInputForm({
+  ElectromagnetismInputForm({
     required this.selectedEquation,
     required this.onResultChanged,
   });
 
   @override
-  _ThermodynamicsInputFormState createState() =>
-      _ThermodynamicsInputFormState();
+  _ElectromagnetismInputFormState createState() =>
+      _ElectromagnetismInputFormState();
 }
 
-class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
+class _ElectromagnetismInputFormState extends State<ElectromagnetismInputForm> {
   Map<String, double> variables = {
-    'Q': 0.0, // Heat added or removed from the system
-    'W': 0.0, // Work done on or by the system
-    'n': 0.0, // Number of moles of gas
-    'R': 0.0, // Gas constant
-    'T': 0.0, // Temperature of the system
-    'm': 0.0, // Mass of the substance
-    'C': 0.0, // Specific heat capacity
-    'Delta T': 0.0, // Change in temperature
+    'k': 8.99e9, // Coulomb's constant
+    'q1': 0.0, // Charge 1
+    'q2': 0.0, // Charge 2
+    'r': 0.0, //Distance
+    'q0': 0.0, // Charge
+    'F': 0.0, // Force
+    'E': 0.0, // Electric field
+    'q': 0.0, // Charge
+    'v': 0.0, // Velocity
+    'B': 0.0, // Magnetic field
+    'V': 0.0, // Voltage
+    'I': 0.0, // Current
+    'R': 0.0, // Resistance
+    'P': 0.0, // Power
   };
-
-  final String delta = '\u0394';
-
   @override
   Widget build(BuildContext context) {
     List<String> requiredVariables =
         getRequiredVariables(widget.selectedEquation);
+
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(
@@ -132,17 +136,15 @@ class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
           SizedBox(height: 20.0),
           ElevatedButton(
             onPressed: () {
-              // Call a function to calculate result based on selected equation
               double result =
                   calculateResult(widget.selectedEquation, variables);
-              widget.onResultChanged(
-                  result); // Update the result through callback
+              widget.onResultChanged(result);
             },
             child: Text(
               'Calculate',
               style: TextStyle(
-                fontSize: 18.0, // Adjust font size
-                color: Colors.black, // Set text color
+                fontSize: 18.0,
+                color: Colors.black,
               ),
             ),
           ),
@@ -151,41 +153,48 @@ class _ThermodynamicsInputFormState extends State<ThermodynamicsInputForm> {
     );
   }
 
+  void updateResult() {
+    double result = calculateResult(widget.selectedEquation, variables);
+    widget.onResultChanged(result);
+  }
+
   List<String> getRequiredVariables(String equation) {
-    const String delta = '\u0394';
     switch (equation) {
-      case 'PV = nRt':
-        return ['n', 'R', 'T'];
-      case '($delta)U = Q - W':
-        return ['Q', 'W'];
-      case 'q = mC($delta)T':
-        return ['m', 'C', 'Delta T'];
-      case 'W = -p($delta)V':
-        return ['P', 'V'];
-      // Add more cases for other thermodynamic equations if needed
+      case 'F = k(q1*q2)/r^2':
+        return ['k', 'q1', 'q2', 'r'];
+      case 'E = F/q0':
+        return ['F', 'q0'];
+      case 'F = qv*B':
+        return ['q', 'v', 'B'];
+      case 'V = I*R':
+        return ['I', 'R'];
+      case 'P = I*V':
+        return ['I', 'V'];
       default:
         return [];
     }
   }
 
-  double calculateResult(String equation, Map<String, double?> variables) {
+  double calculateResult(String formula, Map<String, double?> variables) {
     double result = 0.0;
-    const String delta = '\u0394';
-    // Implement the calculation based on the selected equation
-    switch (equation) {
-      case 'PV = nRt':
-        result = variables['n']! * variables['R']! * variables['T']!;
+
+    switch (formula) {
+      case 'F = k(q1*q2)/r^2':
+        result = (variables['k']! * variables['q1']! * variables['q2']!) /
+            (variables['r']! * variables['r']!);
         break;
-      case '($delta)U = Q - W':
-        result = variables['Q']! - variables['W']!;
+      case 'E = F/q0':
+        result = variables['F']! / variables['q0']!;
         break;
-      case 'q = mC($delta)T':
-        result = variables['m']! * variables['C']! * variables['Delta T']!;
+      case 'F = qv*B':
+        result = variables['q']! * variables['v']! * variables['B']!;
         break;
-      case 'W = -p($delta)V':
-        result = -variables['P']! * variables['V']!;
+      case 'V = I*R':
+        result = variables['I']! * variables['R']!;
         break;
-      // Add more cases for other thermodynamic equations if needed
+      case 'P = I*V':
+        result = variables['I']! * variables['V']!;
+        break;
     }
 
     return result;
